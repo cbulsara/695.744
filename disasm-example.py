@@ -246,11 +246,14 @@ def parse_add(instr, inbytes, currentOffset):
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
-                mnemonic = opcodeLookup[opcodeString][0] + " dword"
-                operand1 = "[0x" + flipDword(byteString[4:]).decode("utf-8") + "]"
+                mnemonic = opcodeLookup[opcodeString][0] 
+                operand1 = "0x" + flipDword(byteString[4:]).decode("utf-8")
                 operand2 = x86RegLookup[reg]
 
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                if opcodeString == b'01':
+                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                else:
+                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -289,7 +292,7 @@ def parse_add(instr, inbytes, currentOffset):
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
-            mnemonic = opcodeLookup[opcodeString][0] + " dword"
+            mnemonic = opcodeLookup[opcodeString][0]
             operand1 = x86RegLookup[reg]
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
@@ -309,14 +312,14 @@ def parse_add(instr, inbytes, currentOffset):
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
-            mnemonic = opcodeLookup[opcodeString][0] + " dword"
+            mnemonic = opcodeLookup[opcodeString][0]
             operand1 = x86RegLookup[reg]
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'03':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
