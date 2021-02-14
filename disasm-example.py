@@ -96,8 +96,15 @@ def parse_modrm(modrmByte):
     return mod, reg, rm
 
 def parse_add(instr, inbytes, currentOffset):
+    
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+    
     #Hexlify the opcode
     opcodeString = binascii.hexlify(instr)
+    
+    
     #add eax, imm32  
     if opcodeString == b'05':
         #add remaining bytes to instruction
@@ -119,8 +126,7 @@ def parse_add(instr, inbytes, currentOffset):
         log.info("parse_add:Found 0x81")
         instructionSize = opcodeLookup[opcodeString][3]
         
-        origInstruction = bytearray()
-        origInstruction.append(inbytes[currentOffset])
+
 
         #add modrm bit to instruction
         instr.append(inbytes[currentOffset + 1])
@@ -372,6 +378,11 @@ def parse_add(instr, inbytes, currentOffset):
     return 1, format_instr(instr, mnemonic)
 
 def parse_and(instr, inbytes, currentOffset):
+    
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+   
     #Hexlify the opcode
     opcodeString = binascii.hexlify(instr)
     #add eax, imm32  
@@ -395,9 +406,6 @@ def parse_and(instr, inbytes, currentOffset):
         log.info("parse_add:Found 0x81")
         instructionSize = opcodeLookup[opcodeString][3]
         
-        origInstruction = bytearray()
-        origInstruction.append(inbytes[currentOffset])
-
         #add modrm bit to instruction
         instr.append(inbytes[currentOffset + 1])
         modrm = binascii.hexlify(instr)[2:]
@@ -506,6 +514,125 @@ def parse_and(instr, inbytes, currentOffset):
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
         return 1, format_instr(instr, mnemonic)
 
+    elif opcodeString == b'23' or opcodeString == b'21':
+        log.info("parse_add:Found 0x01 or 0x03")
+        #add modrm bit to instruction
+        instr.append(inbytes[currentOffset + 1])
+        modrm = binascii.hexlify(instr)[2:]
+        mod, reg, rm = parse_modrm(modrm)
+        log.info("MOD: " + str(mod))
+        log.info("REG: " + str(reg))
+        log.info("RM: " + str(rm))
+
+        if mod == '00':
+            
+            if rm == '101':
+                log.info("parse_add:[disp32]")
+
+                #instruction size is 6 (opcode + modrm + dword)
+                instructionSize = 6
+            
+                #read in remaining bytes
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+                
+                #hexlify the instruction and extract elements
+                byteString = binascii.hexlify(instr)
+                mnemonic = opcodeLookup[opcodeString][0] 
+                operand1 = "0x" + flipDword(byteString[4:]).decode("utf-8")
+                operand2 = x86RegLookup[reg]
+
+                if opcodeString == b'21':
+                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                else:
+                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+            
+            #illegal RM
+            elif rm == '100':
+                log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
+                log.info(opcodeString)
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return 1, format_instr(instr, mnemonic)
+
+            else:
+                #instruction size is 2 (opcode + modrm)
+                instructionSize = 2
+
+                #read in remaining bytes
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+                
+                #hexlify the instruction and extract elements
+                byteString = binascii.hexlify(instr)
+                mnemonic = opcodeLookup[opcodeString][0]
+                operand1 = x86RegLookup[reg]
+                operand2 = x86RegLookup[rm]
+            
+            if opcodeString == b'23':
+                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+            else:
+                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+        
+        if mod == '01':
+            log.info("[r/m + byte]")
+            
+            #instruction size is 3 (opcode + modrm + byte)
+            instructionSize = 3
+            #read in remaining bytes
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+            
+            #hexlify the instruction and extract elements
+            byteString = binascii.hexlify(instr)
+            mnemonic = opcodeLookup[opcodeString][0]
+            operand1 = x86RegLookup[reg]
+            operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
+            
+            if opcodeString == b'23':
+                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+            else:
+                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+        
+        if mod == '10':
+            log.info("r/m + dword")
+
+            #instruction size is 6 (opcode + modrm + dword)
+            instructionSize = 6
+            #read in remaining bytes
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+            
+            #hexlify the instruction and extract elements
+            byteString = binascii.hexlify(instr)
+            mnemonic = opcodeLookup[opcodeString][0]
+            operand1 = x86RegLookup[reg]
+            operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
+
+            if opcodeString == b'23':
+                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+            else:
+                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+        
+        if mod == '11':
+            log.info("r/m")
+
+            #instruction size is 2 (opcode + modrm)
+            instructionSize = 2
+
+            #read in remaining bytes
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+            
+            #hexlify the instruction and extract elements
+            byteString = binascii.hexlify(instr)
+            mnemonic = opcodeLookup[opcodeString][0]
+            operand1 = x86RegLookup[reg]
+            operand2 = x86RegLookup[rm]
+
+            if opcodeString == b'23':
+                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            else:
+                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -559,6 +686,7 @@ if '__main__' == __name__:
     offset = 0
     instr = bytearray()
     instructions = []
+    jumpToOffsets = []                                                      #aggregate offsets jumped-to
     offset = 0
     while offset < len(inbytes):
         b=inbytes[offset]
@@ -571,9 +699,10 @@ if '__main__' == __name__:
             #Code for incrementing offset and 
             byteString = binascii.hexlify(instr)
             offset += offsetIncrement
-            #offset += opcodeLookup[opcodeString][3]
-            #instr_offset = offset + 1 - len(instr)
-            #instr_offset = offset + 1 - opcodeLookup[opcodeString][3]
+            #OG offset increment
+                #offset += opcodeLookup[opcodeString][3]
+                #instr_offset = offset + 1 - len(instr)
+                #instr_offset = offset + 1 - opcodeLookup[opcodeString][3]
             instr_offset = offset - offsetIncrement
             log.info('Adding instruction for offset {}'.format(instr_offset))
             instructions.append((instr_offset, result))
