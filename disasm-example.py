@@ -37,8 +37,11 @@ def dec2bin(x):
 	return "".join(map(lambda y:str((x>>y)&1), range(8-1, -1, -1)))
 
 def flipDword(x):
-    log.info(x[::-1])
-    return x[::-1]
+    if len(x) != 8:
+        log.error("flipDword: Tried to flip a DWORD that wasn't a DWORD")
+    flipped = b''.join((x[6:],x[4:6],x[2:4],x[0:2]))
+    log.info(flipped)
+    return flipped
 
 def format_line(hexbytes, text):
     hexstr = ''.join(['{:02x}'.format(x) for x in hexbytes])
@@ -634,6 +637,40 @@ def parse_and(instr, inbytes, currentOffset):
             else:
                 return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
+    #base case: return db
+    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+    return 1, format_instr(instr, mnemonic)
+
+def parse_call(instr, inbytes, currentOffset):
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+    
+    #Hexlify the opcode
+    opcodeString = binascii.hexlify(instr)
+
+    if opcodeString == b'e8' or opcodeString == b'E8':
+        
+        #instruction size is fixed (5, opcode + id dword)
+        instructionSize = opcodeLookup[opcodeString][3]
+        for x in range(currentOffset + 1, currentOffset + opcodeLookup[opcodeString][3]):
+            instr.append(inbytes[x])
+        
+        log.info("parse_call::Found 0xE8")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = opcodeLookup[opcodeString][0]
+        
+        #calculate the call offset
+    
+        cd = flipDword(byteString[2:])                                                          #extract cd and flip the dword
+        callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8)                                        #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
     return 1, format_instr(instr, mnemonic)
