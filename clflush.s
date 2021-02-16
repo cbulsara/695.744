@@ -1,0 +1,5 @@
+[BITS 32]
+clflush [eax]
+clflush [byte eax + 0x08]
+clflush [dword eax + 0x08]
+clflush [0x11223344]
