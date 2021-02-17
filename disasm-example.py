@@ -41,7 +41,9 @@ opcodeLookup = {
     b'44': ['inc', 'inc r32', '100'],
     b'45': ['inc', 'inc r32', '101'],
     b'46': ['inc', 'inc r32', '110'],
-    b'47': ['inc', 'inc r32', '111']
+    b'47': ['inc', 'inc r32', '111'],
+    b'eb': ['jmp', 'jmp rel8'],
+    b'e9': ['jmp', 'jmp rel32']
 }
 
 x86RegLookup = {
@@ -64,6 +66,13 @@ def flipDword(x):
     flipped = b''.join((x[6:],x[4:6],x[2:4],x[0:2]))
     log.info(flipped)
     return flipped
+
+def byteToSignExtendedDword(x):
+    if len(x) != 2:
+        log.error("flipDword: Tried to DWORD a BYTE that wasn't a BYTE")
+    sed = b''.join((b'000000',x))
+    log.info(sed)
+    return sed
 
 def format_line(hexbytes, text):
     hexstr = ''.join(['{:02x}'.format(x) for x in hexbytes])
@@ -104,6 +113,23 @@ def parse_cpuid(instr):
         return format_line(instr, 'cpuid')
     return None
 
+#parse_ff router
+def parse_ff(reg, origInstruction, inbytes, currentOffset):
+     #if /1 this is dec r/m32
+    if reg == '001':
+        return parse_dec(origInstruction, inbytes, currentOffset)
+
+    #if /0 this is inc r/m32
+    if reg == '000':
+        return parse_inc(origInstruction, inbytes, currentOffset)
+
+    #if /2 this is call r/m32
+    if reg == '010':
+        return parse_call(origInstruction, inbytes, currentOffset)
+    
+    if reg == '100':
+        return parse_jmp(origInstruction, inbytes, currentOffset)
+#/parse_ff
 
 # This is not really "mov eax, eax", only an example of a formatted instruction
 def parse_fake_mov(instr, inbytes, currentOffset):
@@ -716,18 +742,10 @@ def parse_call(instr, inbytes, currentOffset):
         log.info("REG: " + str(reg))
         log.info("RM: " + str(rm))
 
-        #if /1 this is dec r/m32
-        if reg == '001':
-            return parse_dec(origInstruction, inbytes, currentOffset)
+        if reg != '010':
+            return parse_ff(reg, origInstruction, inbytes, currentOffset)
 
-        #if /2 this is inc r/m32
-        if reg == '000':
-            return parse_inc(origInstruction, inbytes, currentOffset)
-
-        elif reg == '010':
-            log.info("parse_call:ff confirmed /2")
-
-        log.info("parse_add:Found 0xff")
+        log.info("parse_call:Found 0xff")
 
      #[r/m]
         if mod == '00':
@@ -950,17 +968,9 @@ def parse_dec(instr, inbytes, currentOffset):
         log.info("MOD: " + str(mod))
         log.info("REG: " + str(reg))
         log.info("RM: " + str(rm))
-        
-        #if /2 this is call r/m32
-        if reg == '010':
-            return parse_call(origInstruction, inbytes, currentOffset)
-        
-        #if this is /0 then inc r/m32
-        if reg == '000':
-            return parse_inc(origInstruction, inbytes, currentOffset)
 
-        elif reg == '001':
-            log.info("parse_dec:ff confirmed /1")
+        if reg != '001':
+            return parse_ff(reg, origInstruction, inbytes, currentOffset)
 
         log.info("parse_dec:Found 0xff")
 
@@ -1578,17 +1588,9 @@ def parse_inc(instruction, inbytes, currentOffset):
         log.info("MOD: " + str(mod))
         log.info("REG: " + str(reg))
         log.info("RM: " + str(rm))
-                
-        #if /2 this is call r/m32
-        if reg == '010':
-            return parse_call(origInstruction, inbytes, currentOffset)
-
-        #if /1 this is dec rm32
-        elif reg == '001':
-            return parse_dec(origInstruction, inbytes, currentOffset)
         
-        elif reg == '000':
-            log.info("parse_inc:ff confirmed /0")
+        if reg != '000':
+            return parse_ff(reg, origInstruction, inbytes, currentOffset)
 
         log.info("parse_inc:Found 0xff")
 
@@ -1700,6 +1702,176 @@ def parse_inc(instruction, inbytes, currentOffset):
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
     return 1, format_instr(instr, mnemonic)
 #/inc
+
+#jmp   TODO offset tracking
+def parse_jmp(instr, inbytes, currentOffset):
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+    
+    #Hexlify the opcode
+    opcodeString = binascii.hexlify(instr)
+    #eb
+    if opcodeString == b'eb' or opcodeString == b'EB':
+        
+        #instruction size is 2 (opcode + ib)
+        instructionSize = 2
+        for x in range(currentOffset + 1, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+        
+        log.info("parse_jmp::Found 0xEB")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = "jmp short"
+        
+        #calculate the call offset
+    
+        cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
+        callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    #/eb
+
+    #e9
+    if opcodeString == b'e9' or opcodeString == b'E9':
+        
+        #instruction size is 5 (opcode + id)
+        instructionSize = 5
+        for x in range(currentOffset + 1, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+        
+        log.info("parse_jmp::Found 0xE9")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = "jmp near"
+        
+        #calculate the call offset
+    
+        cd = flipDword(byteString[2:])                                                          #extract cd and flip the dword
+        callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    #/e9
+
+    #ff
+    elif opcodeString == b'ff' or opcodeString == b'FF':
+        
+        
+        #add modrm bit to instruction
+        instr.append(inbytes[currentOffset + 1])
+        modrm = binascii.hexlify(instr)[2:]
+        mod, reg, rm = parse_modrm(modrm)
+        log.info("MOD: " + str(mod))
+        log.info("REG: " + str(reg))
+        log.info("RM: " + str(rm))
+
+        if reg != '100':
+            return parse_ff(reg, origInstruction, inbytes, currentOffset)
+           
+
+        log.info("parse_add:Found 0xff")
+
+     #[r/m]
+        if mod == '00':
+            log.info("[r/m]")
+            log.info(opcodeString)
+            
+            #[disp 32]
+            if rm == '101':
+                log.info("[disp 32]")
+                
+                #instruction size = 6 (opcode + modrm + dword)
+                instructionSize = 6
+                
+                #read in remaining bytes
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+                
+                #hexlify the instruction and extract elements
+                byteString = binascii.hexlify(instr)
+                mnemonic = "jmp"
+                operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
+                return instructionSize, format_instr(instr, mnemonic, operand1)
+            
+            #illegal RM
+            elif rm == '100':
+                log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
+                log.info(opcodeString)
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return 1, format_instr(instr, mnemonic)
+
+            #[not special case]
+            else:
+                
+                #instruction size = 2 (opcode + modrm)
+                instructionSize = 2
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+
+                #hexlify the instruction and extract elements
+                byteString = binascii.hexlify(instr)
+                mnemonic = "jmp"
+                operand1 = "dword [" + x86RegLookup[rm] + "]"
+                return instructionSize, format_instr(instr, mnemonic, operand1)
+        
+        elif mod == '01':
+            log.info("[r/m + byte]")
+
+            #instruction size = 3 (opcode + modrm + byte)
+            instructionSize = 3
+
+            #read in remaining bytes
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+            
+            #hexlify the instruction and extract elements
+            byteString = binascii.hexlify(instr)
+            mnemonic = "jmp"
+            operand1 = "dword [byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
+            return instructionSize, format_instr(instr, mnemonic, operand1)
+
+        elif mod == '10':
+            log.info("[r/m + dword]")
+
+            #instruction size = 6 (opcode + modrm + dword)
+            instructionSize = 6
+
+            #read in remaining bytes
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+            
+            #hexlify the instruction and extract elements
+            byteString = binascii.hexlify(instr)
+            mnemonic = "jmp"
+            operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + byteString[4:12].decode("utf-8") +"]"
+            return instructionSize, format_instr(instr, mnemonic, operand1)
+        elif mod == '11':
+            log.info("r/m")
+
+            #instruction size = 2 (opcode + modrm)
+            instructionSize = 2
+
+            #read in remaining bytes
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+            
+            #hexlify the instruction and extract elements
+            byteString = binascii.hexlify(instr)
+            mnemonic = "jmp"
+            operand1 = x86RegLookup[rm]
+            return instructionSize, format_instr(instr, mnemonic, operand1)   
+    #/ff
+
+    #base case: return db
+    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+    return 1, format_instr(instr, mnemonic)
+#/jmp
 
 def parse(instruction, inbytes, currentOffset):
     log.info("parse::Instruction: " + str(binascii.hexlify(instruction)))
