@@ -43,7 +43,11 @@ opcodeLookup = {
     b'46': ['inc', 'inc r32', '110'],
     b'47': ['inc', 'inc r32', '111'],
     b'eb': ['jmp', 'jmp rel8'],
-    b'e9': ['jmp', 'jmp rel32']
+    b'e9': ['jmp', 'jmp rel32'],
+    b'74': ['jz', 'jz rel8'],
+    b'0f': ['jz', 'jz rel 32'],
+    b'75': ['jnz', 'jnz rel8'],
+    b'0f': ['jnz', 'jnz rel32']
 }
 
 x86RegLookup = {
@@ -130,6 +134,24 @@ def parse_ff(reg, origInstruction, inbytes, currentOffset):
     if reg == '100':
         return parse_jmp(origInstruction, inbytes, currentOffset)
 #/parse_ff
+
+#parse_0f router
+def parse_0f(byte2, origInstruction, inbytes, currentOffset):
+    #if AE this is clflush M8
+    if byte2 == b'ae' or byte2 == b'AE':
+        return parse_clflush(origInstruction, inbytes, currentOffset)
+
+    #if AF this is imul r32, r/m32
+    if byte2 == b'af' or byte2 == b'AF':
+        return parse_imul(origInstruction, inbytes, currentOffset)
+
+    #if 84 this is jz rel32
+    if byte2 == b'84':
+        return parse_jz(origInstruction, inbytes, currentOffset)
+
+    if byte2 == b'85':
+        return parse_jnz(origInstruction, inbytes, currentOffset)
+#/parse_0f
 
 # This is not really "mov eax, eax", only an example of a formatted instruction
 def parse_fake_mov(instr, inbytes, currentOffset):
@@ -860,11 +882,11 @@ def parse_clflush(instr, inbytes, currentOffset):
     byte2 = binascii.hexlify(instr)[2:4]
 
     #if byte 2 is af this is imul r32. r/m32
-    if byte2 == b'af':
-        return parse_imul(origInstruction, inbytes, currentOffset)
-    
-    elif byte2 == b'ae':
-        log.info("parse_clflush:confirmed AE")
+ 
+    if byte2 != b'ae':
+        return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+
+    log.info("parse_clflush:confirmed byte2 = ae")
 
     #add modrm bit to instruction
     instr.append(inbytes[currentOffset + 2])
@@ -1337,19 +1359,18 @@ def parse_imul(instr, inbytes, currentOffset):
         #Hexlify the opcode
         opcodeString = binascii.hexlify(instr)
 
-        #add 'AE' byte to instruction
+        #add byte2 to instruction
         instr.append(inbytes[currentOffset + 1])
 
         #examine byte 2
         byte2 = binascii.hexlify(instr)[2:4]
 
         #if byte 2 is af this is clflush m8
-        if byte2 == b'ae':
-            return parse_clflush(origInstruction, inbytes, currentOffset)
-        
-        elif byte2 == b'af':
-            log.info("parse_imul:confirmed AE")
-        
+        if byte2 != b'af':
+            return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+
+        log.info("parse_imul: confirmed byte2 = af")
+
         #add modrm bit to instruction
         instr.append(inbytes[currentOffset + 2])
         modrm = binascii.hexlify(instr)[4:]
@@ -1872,6 +1893,142 @@ def parse_jmp(instr, inbytes, currentOffset):
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
     return 1, format_instr(instr, mnemonic)
 #/jmp
+
+#jz
+def parse_jz(instr, inbytes, currentOffset):
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+    
+    #Hexlify the opcode
+    opcodeString = binascii.hexlify(instr)
+    
+    #74
+    if opcodeString == b'74':
+        #instruction size is 2 (opcode + ib)
+        instructionSize = 2
+        for x in range(currentOffset + 1, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+        
+        log.info("parse_jz::Found 0x74")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = "jz short"
+        #calculate the call offset
+    
+        cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
+        callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    #/74
+
+    #0f 84
+    if opcodeString == b'0f':
+        #add 'byte2' byte to instruction
+        instr.append(inbytes[currentOffset + 1])
+
+        #examine byte 2
+        byte2 = binascii.hexlify(instr)[2:4]
+
+        #if byte 2 is af this is imul r32. r/m32
+    
+        if byte2 != b'84':
+            return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+
+        log.info("parse_jz:confirmed byte2 = 84")
+
+        #instruction size is 6 (opcode + byte2 + id)
+        instructionSize = 6
+        for x in range(currentOffset + 2, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+        
+        log.info("parse_jz::Found 0x0f 0x84")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = "jz near"
+        
+        #calculate the call offset
+    
+        cd = flipDword(byteString[4:])                                                          #extract cd and flip the dword
+        callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    #/0f 84
+#/jz
+
+#jnz
+def parse_jnz(instr, inbytes, currentOffset):
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+    
+    #Hexlify the opcode
+    opcodeString = binascii.hexlify(instr)
+    
+    #75
+    if opcodeString == b'75':
+        #instruction size is 2 (opcode + ib)
+        instructionSize = 2
+        for x in range(currentOffset + 1, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+        
+        log.info("parse_jnz::Found 0x74")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = "jnz short"
+        #calculate the call offset
+    
+        cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
+        callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    #/75
+
+    #0f 85
+    if opcodeString == b'0f':
+        #add 'byte2' byte to instruction
+        instr.append(inbytes[currentOffset + 1])
+
+        #examine byte 2
+        byte2 = binascii.hexlify(instr)[2:4]
+
+        #if byte 2 is af this is imul r32. r/m32
+    
+        if byte2 != b'85':
+            return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+
+        log.info("parse_jnz:confirmed byte2 = 85")
+
+        #instruction size is 6 (opcode + byte2 + id)
+        instructionSize = 6
+        for x in range(currentOffset + 2, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+        
+        log.info("parse_jnz::Found 0x0f 0x84")
+        byteString = binascii.hexlify(instr)
+        log.info(byteString)
+        mnemonic = "jnz near"
+        
+        #calculate the call offset
+    
+        cd = flipDword(byteString[4:])                                                          #extract cd and flip the dword
+        callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
+        log.info(operand1)                                      
+        log.info("CurrentOffset = " + str(currentOffset))           
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+    #/0f 85
+#/jz
 
 def parse(instruction, inbytes, currentOffset):
     log.info("parse::Instruction: " + str(binascii.hexlify(instruction)))
