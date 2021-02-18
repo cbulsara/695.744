@@ -74,9 +74,16 @@ def flipDword(x):
 def byteToSignExtendedDword(x):
     if len(x) != 2:
         log.error("flipDword: Tried to DWORD a BYTE that wasn't a BYTE")
-    sed = b''.join((b'000000',x))
-    log.info(sed)
-    return sed
+    else:
+        
+        if int(x, 16) > 127:
+            sed = b''.join((b'ffffff',x))
+            log.info(sed)
+            return sed
+        else:
+            sed = b''.join((b'000000', x))
+            log.info(sed)
+            return sed
 
 def format_line(hexbytes, text):
     hexstr = ''.join(['{:02x}'.format(x) for x in hexbytes])
@@ -1917,7 +1924,7 @@ def parse_jz(instr, inbytes, currentOffset):
         #calculate the call offset
     
         cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
-        callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))         #aksjfsajlhfsakjfhsaf
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
@@ -1962,7 +1969,7 @@ def parse_jz(instr, inbytes, currentOffset):
     #/0f 84
 #/jz
 
-#jnz
+#jnz TODO: when jumping short backwards, offsets always off by 0x00000100
 def parse_jnz(instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
