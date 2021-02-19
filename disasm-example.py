@@ -73,8 +73,9 @@ opcodeLookup = {
     b'3d': ['cmp', 'cmp eax, imm32'],
     b'81': ['cmp', 'cmp r/m32, imm32'],
     b'39': ['cmp', 'cmp r/m32, r32'],
-    b'3b': ['cmp', 'cmp r32, r/m32']
-}
+    b'3b': ['cmp', 'cmp r32, r/m32'],
+    b'f2': ['repne', 'repne cmpsd' ]                      #note, keying on prefix not opcode, only works because of limited assignment scope
+} 
 
 x86RegLookup = {
 	'000':'eax',
@@ -3459,6 +3460,34 @@ def parse_cmp(instr, inbytes, currentOffset):
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
     return 1, format_instr(instr, mnemonic)
 #/cmp
+
+#repne cmpsd
+def parse_repne(instr, inbytes, currentOffset):
+    #save a copy of instr before operating
+    origInstruction = bytearray()
+    origInstruction.append(inbytes[currentOffset])
+   
+    #intr only contains the prefix
+    #read the next byte and confirm that it is the opcode
+    instr.append(inbytes[currentOffset + 1])
+    
+    #Hexlify the opcode
+    opcodeString = binascii.hexlify(instr)[2:]                             #the opcode is the second byte
+    log.info("opcodestring: " + opcodeString.decode("utf-8"))
+    
+    if opcodeString == b'a7':
+        #instruction size is 5 (opcode + imm32)
+        instructionSize = 2
+             
+        log.info("parse_repne::Found 0xa7")
+        mnemonic = 'repne cmpsd'
+        offsetIncrement = instructionSize
+        return offsetIncrement, format_instr(instr, mnemonic)
+    
+    #base case: return db
+    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+    return 1, format_instr(origInstruction, mnemonic)
+#/repne cmpsd
 
 def parse(instruction, inbytes, currentOffset):
     log.info("parse::Instruction: " + str(binascii.hexlify(instruction)))
