@@ -198,107 +198,107 @@ def parse_cpuid(instr):
     return None
 
 #parse_ff router
-def parse_ff(reg, origInstruction, inbytes, currentOffset):
+def parse_ff(reg, jumpToOffsets, origInstruction, inbytes, currentOffset):
      #if /1 this is dec r/m32
     if reg == '001':
-        return parse_dec(origInstruction, inbytes, currentOffset)
+        return parse_dec(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /0 this is inc r/m32
     if reg == '000':
-        return parse_inc(origInstruction, inbytes, currentOffset)
+        return parse_inc(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /2 this is call r/m32
     if reg == '010':
-        return parse_call(origInstruction, inbytes, currentOffset)
+        return parse_call(jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     if reg == '100':
-        return parse_jmp(origInstruction, inbytes, currentOffset)
+        return parse_jmp(jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     if reg == '110':
-        return parse_push(origInstruction, inbytes, currentOffset)
+        return parse_push(jumpToOffsets, origInstruction, inbytes, currentOffset)
 #/parse_ff
 
 #parse_0f router
-def parse_0f(byte2, origInstruction, inbytes, currentOffset):
+def parse_0f(byte2, jumpToOffsets, origInstruction, inbytes, currentOffset):
     #if AE this is clflush M8
     if byte2 == b'ae' or byte2 == b'AE':
-        return parse_clflush(origInstruction, inbytes, currentOffset)
+        return parse_clflush(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if AF this is imul r32, r/m32
     if byte2 == b'af' or byte2 == b'AF':
-        return parse_imul(origInstruction, inbytes, currentOffset)
+        return parse_imul(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if 84 this is jz rel32
     if byte2 == b'84':
-        return parse_jz(origInstruction, inbytes, currentOffset)
+        return parse_jz(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     if byte2 == b'85':
-        return parse_jnz(origInstruction, inbytes, currentOffset)
+        return parse_jnz(jumpToOffsets, origInstruction, inbytes, currentOffset)
 #/parse_0f
 
 #parse_f7 router
-def parse_f7(reg, origInstruction, inbytes, currentOffset):
+def parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset):
     
     #if /7 this is idiv r/m32
     if reg == '111':
-        return parse_idiv(origInstruction, inbytes, currentOffset)
+        return parse_idiv(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /5 this is imul r/m32
     if reg == '101':
-        return parse_imul(origInstruction, inbytes, currentOffset)
+        return parse_imul(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /4 this is mul r/m32
     if reg == '100':
-        return parse_mul(origInstruction, inbytes, currentOffset)
+        return parse_mul(jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     #if /3 this is neg r/m32
     if reg == '011':
-        return parse_neg(origInstruction, inbytes, currentOffset)
+        return parse_neg(jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     #if /2 this is not r/m32
     if reg == '010':
-        return parse_not(origInstruction, inbytes, currentOffset)
+        return parse_not(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /0 this is xor r/m32
     if reg == '000':
-        return parse_xor(origInstruction, inbytes, currentOffset)
+        return parse_xor(jumpToOffsets, origInstruction, inbytes, currentOffset)
 #/parse_f7 router
 
 #parse_81 router
-def parse_81(reg, origInstruction, inbytes, currentOffset):
+def parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset):
     
     #if /0 this is add r/m32, imm32
     if reg == '000':
-        return parse_add(origInstruction, inbytes, currentOffset)
+        return parse_add(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /4 this is and r/m32, imm32
     if reg == '100':
-        return parse_and(origInstruction, inbytes, currentOffset)
+        return parse_and(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /7 this is cmp r/m32, imm32
     if reg == '111':
-        return parse_cmp(origInstruction, inbytes, currentOffset)
+        return parse_cmp(jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     #if /1 this is or r/m32, imm32
     if reg == '001':
-        return parse_or(origInstruction, inbytes, currentOffset)
+        return parse_or(jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     #if /3 this is sbb r/m32, imm32
     if reg == '011':
-        return parse_sbb(origInstruction, inbytes, currentOffset)
+        return parse_sbb(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /5 this is sub r/m32, imm32
     if reg == '101':
-        return parse_sub(origInstruction, inbytes, currentOffset)
+        return parse_sub(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     #if /6 this is sub r/m32, imm32
     if reg == '110':
-        return parse_xor(origInstruction, inbytes, currentOffset)
+        return parse_xor(jumpToOffsets, origInstruction, inbytes, currentOffset)
 
 #/parse_81 router
 
 # This is not really "mov eax, eax", only an example of a formatted instruction
-def parse_fake_mov(instr, inbytes, currentOffset):
+def parse_fake_mov(jumpToOffsets, instr, inbytes, currentOffset):
     if 2 == len(instr) and b'\xd0\x0d' == instr:
         log.info('Found fake mov!')
         return format_instr(instr, 'mov', 'eax', 'eax')
@@ -313,7 +313,7 @@ def parse_modrm(modrmByte):
     return mod, reg, rm
 
 #add    TODO make [byte] [dword] like call 
-def parse_add(instr, inbytes, currentOffset):
+def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
     
     #save a copy of instr before operating
     origInstruction = bytearray()
@@ -341,7 +341,7 @@ def parse_add(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
     #/05
 
     #81
@@ -362,7 +362,7 @@ def parse_add(instr, inbytes, currentOffset):
         log.info("RM: " + str(rm))
         
         if reg != '000':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_add:confirmed /0")
 
@@ -387,7 +387,7 @@ def parse_add(instr, inbytes, currentOffset):
                 mnemonic = "add dword"
                 operand1 = "[0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -407,7 +407,7 @@ def parse_add(instr, inbytes, currentOffset):
                 mnemonic = "add dword"
                 operand1 = "[" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -424,7 +424,7 @@ def parse_add(instr, inbytes, currentOffset):
             mnemonic = "add dword"
             operand1 = "[" + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -440,7 +440,7 @@ def parse_add(instr, inbytes, currentOffset):
             mnemonic = "add dword"
             operand1 = "[" + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -456,7 +456,7 @@ def parse_add(instr, inbytes, currentOffset):
             mnemonic = "add"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -493,9 +493,9 @@ def parse_add(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'01':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -519,9 +519,9 @@ def parse_add(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'03':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -539,9 +539,9 @@ def parse_add(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'03':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -559,9 +559,9 @@ def parse_add(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'03':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -580,9 +580,9 @@ def parse_add(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'03':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
                 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -608,7 +608,7 @@ def parse_add(instr, inbytes, currentOffset):
 #/add
 
 #and    TODO make [byte] [dword] like call  
-def parse_and(instr, inbytes, currentOffset):
+def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
     
     #save a copy of instr before operating
     origInstruction = bytearray()
@@ -635,7 +635,7 @@ def parse_and(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'81':
         log.info("parse_add:Found 0x81")
@@ -654,7 +654,7 @@ def parse_and(instr, inbytes, currentOffset):
                 
         
         if reg != '100':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_and:confirmed /4")
 
@@ -679,7 +679,7 @@ def parse_and(instr, inbytes, currentOffset):
                 mnemonic = "and dword"
                 operand1 = "[0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -699,7 +699,7 @@ def parse_and(instr, inbytes, currentOffset):
                 mnemonic = "and dword"
                 operand1 = "[" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -716,7 +716,7 @@ def parse_and(instr, inbytes, currentOffset):
             mnemonic = "and dword"
             operand1 = "[" + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -732,7 +732,7 @@ def parse_and(instr, inbytes, currentOffset):
             mnemonic = "and dword"
             operand1 = "[" + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -748,7 +748,7 @@ def parse_and(instr, inbytes, currentOffset):
             mnemonic = "and"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -783,9 +783,9 @@ def parse_and(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'21':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -809,9 +809,9 @@ def parse_and(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'23':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -829,9 +829,9 @@ def parse_and(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'23':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -849,9 +849,9 @@ def parse_and(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'23':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -870,9 +870,9 @@ def parse_and(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'23':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -880,7 +880,7 @@ def parse_and(instr, inbytes, currentOffset):
 #/and
 
 #call   TODO offset tracking
-def parse_call(instr, inbytes, currentOffset):
+def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -904,11 +904,12 @@ def parse_call(instr, inbytes, currentOffset):
     
         cd = flipDword(byteString[2:])                                                          #extract cd and flip the dword
         callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/e8    
 
     #ff
@@ -924,7 +925,7 @@ def parse_call(instr, inbytes, currentOffset):
         log.info("RM: " + str(rm))
 
         if reg != '010':
-            return parse_ff(reg, origInstruction, inbytes, currentOffset)
+            return parse_ff(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_call:Found 0xff")
 
@@ -948,7 +949,7 @@ def parse_call(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "call"
                 operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -970,7 +971,7 @@ def parse_call(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "call"
                 operand1 = "[" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -986,7 +987,7 @@ def parse_call(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "call"
             operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -1002,7 +1003,7 @@ def parse_call(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "call"
             operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         elif mod == '11':
             log.info("r/m")
 
@@ -1017,7 +1018,7 @@ def parse_call(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "call"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1)   
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)   
     #/ff
 
     #base case: return db
@@ -1026,7 +1027,7 @@ def parse_call(instr, inbytes, currentOffset):
 #/call
 
 #clflush
-def parse_clflush(instr, inbytes, currentOffset):
+def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
     log.info("parse_clflush: found 0x0f")
     #save a copy of instr before operating
     origInstruction = bytearray()
@@ -1044,7 +1045,7 @@ def parse_clflush(instr, inbytes, currentOffset):
     #if byte 2 is af this is imul r32. r/m32
  
     if byte2 != b'ae':
-        return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+        return parse_0f(byte2, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     log.info("parse_clflush:confirmed byte2 = ae")
 
@@ -1072,7 +1073,7 @@ def parse_clflush(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "clflush"
             operand1 = "[0x" + flipDword(byteString[6:]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)   
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)   
             
         #illegal RM
         elif rm == '100':
@@ -1095,7 +1096,7 @@ def parse_clflush(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "clflush"
             operand1 = "[" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)  
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)  
 
     elif mod == '01':
         log.info("parse_clflush:r/m + byte")
@@ -1110,7 +1111,7 @@ def parse_clflush(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "clflush"
         operand1 = "[byte 0x" + byteString[6:].decode("utf-8") + "]"
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     
     elif mod == '10':
         log.info("parse_clflush:r/m + dword")
@@ -1125,7 +1126,7 @@ def parse_clflush(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "clflush"
         operand1 = "[dword 0x" + flipDword(byteString[6:]).decode("utf-8") + "]"
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -1133,7 +1134,7 @@ def parse_clflush(instr, inbytes, currentOffset):
 #/clflush
 
 #dec
-def parse_dec(instr, inbytes, currentOffset):
+def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -1152,7 +1153,7 @@ def parse_dec(instr, inbytes, currentOffset):
         log.info("RM: " + str(rm))
 
         if reg != '001':
-            return parse_ff(reg, origInstruction, inbytes, currentOffset)
+            return parse_ff(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_dec:Found 0xff")
 
@@ -1176,7 +1177,7 @@ def parse_dec(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "dec"
                 operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -1199,7 +1200,7 @@ def parse_dec(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "dec"
                 operand1 = "[" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -1215,7 +1216,7 @@ def parse_dec(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "dec"
             operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -1231,7 +1232,7 @@ def parse_dec(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "dec"
             operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + byteString[4:12].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         elif mod == '11':
             log.info("r/m")
 
@@ -1246,7 +1247,7 @@ def parse_dec(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "dec"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1) 
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/ff
 
     #48 - 4f
@@ -1258,7 +1259,7 @@ def parse_dec(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "dec"
         operand1 = x86RegLookup[opcodeLookup[byteString][2]]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
         
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -1266,7 +1267,7 @@ def parse_dec(instr, inbytes, currentOffset):
 #/dec
 
 #idiv
-def parse_idiv(instr, inbytes, currentOffset):
+def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -1281,7 +1282,7 @@ def parse_idiv(instr, inbytes, currentOffset):
     
     #confirm /7
     if reg != '111':
-        return parse_f7(reg, origInstruction, inbytes, currentOffset)
+        return parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
     log.info("parse_idiv:ff confirmed /7")
 
@@ -1310,7 +1311,7 @@ def parse_idiv(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "idiv"
             operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         #illegal RM
         elif rm == '100':
@@ -1333,7 +1334,7 @@ def parse_idiv(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "idiv"
             operand1 = "[" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     
     elif mod == '01':
         log.info("[r/m + byte]")
@@ -1349,7 +1350,7 @@ def parse_idiv(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "idiv"
         operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
     elif mod == '10':
         log.info("[r/m + dword]")
@@ -1365,7 +1366,7 @@ def parse_idiv(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "idiv"
         operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + byteString[4:12].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     elif mod == '11':
         log.info("r/m")
 
@@ -1380,7 +1381,7 @@ def parse_idiv(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "idiv"
         operand1 = x86RegLookup[rm]
-        return instructionSize, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -1388,7 +1389,7 @@ def parse_idiv(instr, inbytes, currentOffset):
 #/idiv
 
 #imul
-def parse_imul(instr, inbytes, currentOffset):
+def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -1405,7 +1406,7 @@ def parse_imul(instr, inbytes, currentOffset):
         
         #confirm /5
         if reg != '101':
-            return parse_f7(reg, origInstruction, inbytes, currentOffset)
+            return parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_imul:ff confirmed /5")
 
@@ -1434,7 +1435,7 @@ def parse_imul(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "imul"
                 operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -1457,7 +1458,7 @@ def parse_imul(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "imul"
                 operand1 = "[" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -1473,7 +1474,7 @@ def parse_imul(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "imul"
             operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -1489,7 +1490,7 @@ def parse_imul(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "imul"
             operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + byteString[4:12].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         elif mod == '11':
             log.info("r/m")
 
@@ -1504,7 +1505,7 @@ def parse_imul(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "imul"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     #/f7
 
     #0f
@@ -1524,7 +1525,7 @@ def parse_imul(instr, inbytes, currentOffset):
 
         #if byte 2 is af this is clflush m8
         if byte2 != b'af':
-            return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+            return parse_0f(byte2, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_imul: confirmed byte2 = af")
 
@@ -1554,7 +1555,7 @@ def parse_imul(instr, inbytes, currentOffset):
                 operand1 = "dword [0x" + flipDword(byteString[6:]).decode("utf-8") + "]"
                 operand2 = x86RegLookup[reg]
 
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -1577,7 +1578,7 @@ def parse_imul(instr, inbytes, currentOffset):
                 operand1 = x86RegLookup[reg]
                 operand2 = "dword [" + x86RegLookup[rm] + "]"
             
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
                 
         if mod == '01':
             log.info("[r/m + byte]")
@@ -1594,7 +1595,7 @@ def parse_imul(instr, inbytes, currentOffset):
             operand1 = x86RegLookup[reg]
             operand2 = "dword [byte "+ x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8") + "]"
             
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -1611,7 +1612,7 @@ def parse_imul(instr, inbytes, currentOffset):
             operand1 = x86RegLookup[reg]
             operand2 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") + "]"
 
-            return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             
         if mod == '11':
             log.info("r/m")
@@ -1629,7 +1630,7 @@ def parse_imul(instr, inbytes, currentOffset):
             operand1 = x86RegLookup[reg]
             operand2 = x86RegLookup[rm]
 
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)     
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)     
     #/0f
 
     #69
@@ -1662,7 +1663,7 @@ def parse_imul(instr, inbytes, currentOffset):
                 operand2 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand3 = "0x" + flipDword(byteString[12:]).decode("utf-8")
 
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
             
             #illegal RM
             elif rm == '100':
@@ -1686,7 +1687,7 @@ def parse_imul(instr, inbytes, currentOffset):
                 operand2 = "dword [" + x86RegLookup[rm] + "]"
                 operand3 = "0x" + flipDword(byteString[4:]).decode("utf-8")
             
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
                 
         if mod == '01':
             log.info("[r/m + byte]")
@@ -1704,7 +1705,7 @@ def parse_imul(instr, inbytes, currentOffset):
             operand2 = "dword [byte "+ x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") + "]"
             operand3 = "0x" + flipDword(byteString[6:]).decode("utf-8")
                         
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -1722,7 +1723,7 @@ def parse_imul(instr, inbytes, currentOffset):
             operand2 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
             operand3 = "0x" + flipDword(byteString[12:]).decode("utf-8")
 
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)
             
         if mod == '11':
             log.info("r/m")
@@ -1741,14 +1742,14 @@ def parse_imul(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
             operand3 = "0x" + flipDword(byteString[4:]).decode("utf-8")
             
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)   
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)   
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
     return 1, format_instr(instr, mnemonic)
 #/imul
 
 #inc
-def parse_inc(instr, inbytes, currentOffset):
+def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -1768,7 +1769,7 @@ def parse_inc(instr, inbytes, currentOffset):
         log.info("RM: " + str(rm))
         
         if reg != '000':
-            return parse_ff(reg, origInstruction, inbytes, currentOffset)
+            return parse_ff(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_inc:Found 0xff")
 
@@ -1792,7 +1793,7 @@ def parse_inc(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "inc"
                 operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -1815,7 +1816,7 @@ def parse_inc(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "inc"
                 operand1 = "[" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -1831,7 +1832,7 @@ def parse_inc(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "inc"
             operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -1847,7 +1848,7 @@ def parse_inc(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "inc"
             operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '11':
             log.info("r/m")
@@ -1863,7 +1864,7 @@ def parse_inc(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "inc"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1) 
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
         return 1, format_instr(instr, mnemonic)
@@ -1878,7 +1879,7 @@ def parse_inc(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "inc"
         operand1 = x86RegLookup[opcodeLookup[byteString][2]]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/40 - 47
 
     #base case: return db
@@ -1887,7 +1888,7 @@ def parse_inc(instr, inbytes, currentOffset):
 #/inc
 
 #jmp   TODO offset tracking
-def parse_jmp(instr, inbytes, currentOffset):
+def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -1911,11 +1912,12 @@ def parse_jmp(instr, inbytes, currentOffset):
     
         cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
         callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/eb
 
     #e9
@@ -1935,11 +1937,12 @@ def parse_jmp(instr, inbytes, currentOffset):
     
         cd = flipDword(byteString[2:])                                                          #extract cd and flip the dword
         callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/e9
 
     #ff
@@ -1955,7 +1958,7 @@ def parse_jmp(instr, inbytes, currentOffset):
         log.info("RM: " + str(rm))
 
         if reg != '100':
-            return parse_ff(reg, origInstruction, inbytes, currentOffset)
+            return parse_ff(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
            
 
         log.info("parse_add:Found 0xff")
@@ -1980,7 +1983,7 @@ def parse_jmp(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "jmp"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -2001,7 +2004,7 @@ def parse_jmp(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "jmp"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -2017,7 +2020,7 @@ def parse_jmp(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "jmp"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -2032,8 +2035,8 @@ def parse_jmp(instr, inbytes, currentOffset):
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
             mnemonic = "jmp"
-            operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + byteString[4:12].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         elif mod == '11':
             log.info("r/m")
 
@@ -2048,16 +2051,16 @@ def parse_jmp(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "jmp"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1)   
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)   
     #/ff
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumpToOffsets, 1, format_instr(instr, mnemonic)
 #/jmp
 
 #jz
-def parse_jz(instr, inbytes, currentOffset):
+def parse_jz(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2080,11 +2083,12 @@ def parse_jz(instr, inbytes, currentOffset):
     
         cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
         callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))         #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/74
 
     #0f 84
@@ -2098,7 +2102,7 @@ def parse_jz(instr, inbytes, currentOffset):
         #if byte 2 is af this is imul r32. r/m32
     
         if byte2 != b'84':
-            return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+            return parse_0f(byte2, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_jz:confirmed byte2 = 84")
 
@@ -2116,11 +2120,12 @@ def parse_jz(instr, inbytes, currentOffset):
     
         cd = flipDword(byteString[4:])                                                          #extract cd and flip the dword
         callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/0f 84
 
     #base case: return db
@@ -2129,7 +2134,7 @@ def parse_jz(instr, inbytes, currentOffset):
 #/jz
 
 #jnz 
-def parse_jnz(instr, inbytes, currentOffset):
+def parse_jnz(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2152,11 +2157,12 @@ def parse_jnz(instr, inbytes, currentOffset):
     
         cb = byteToSignExtendedDword(byteString[2:])                                            #extract cb with the longest function name ev4r!
         callOffset = (hex((int(cb, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/75
 
     #0f 85
@@ -2170,7 +2176,7 @@ def parse_jnz(instr, inbytes, currentOffset):
         #if byte 2 is af this is imul r32. r/m32
     
         if byte2 != b'85':
-            return parse_0f(byte2, origInstruction, inbytes, currentOffset)
+            return parse_0f(byte2, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_jnz:confirmed byte2 = 85")
 
@@ -2188,11 +2194,12 @@ def parse_jnz(instr, inbytes, currentOffset):
     
         cd = flipDword(byteString[4:])                                                          #extract cd and flip the dword
         callOffset = (hex((int(cd, 16) + currentOffset + instructionSize) & 0xFFFFFFFF))        #aksjfsajlhfsakjfhsaf
+        jumpToOffsets.append(hex(int(callOffset, 16)))
         operand1 = "offset_" + callOffset[2:].zfill(8) +"h"                                      #pretty
         log.info(operand1)                                      
         log.info("CurrentOffset = " + str(currentOffset))           
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1)
     #/0f 85
 
     #base case: return db
@@ -2201,7 +2208,7 @@ def parse_jnz(instr, inbytes, currentOffset):
 #/jz
 
 #lea
-def parse_lea(instr, inbytes, currentOffset):
+def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2237,7 +2244,7 @@ def parse_lea(instr, inbytes, currentOffset):
             mnemonic = "lea"
             operand1 = x86RegLookup[reg]
             operand2 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         #illegal RM
         elif rm == '100':
@@ -2261,7 +2268,7 @@ def parse_lea(instr, inbytes, currentOffset):
             mnemonic = "lea"
             operand1 = x86RegLookup[reg]
             operand2 = "[" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     
     elif mod == '01':
         log.info("[r/m + byte]")
@@ -2278,7 +2285,7 @@ def parse_lea(instr, inbytes, currentOffset):
         mnemonic = "lea"
         operand1 = x86RegLookup[reg]
         operand2 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '10':
         log.info("[r/m + dword]")
@@ -2295,7 +2302,7 @@ def parse_lea(instr, inbytes, currentOffset):
         mnemonic = "lea"
         operand1 = x86RegLookup[reg]
         operand2 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '11':
         pass #illegal mod
@@ -2306,7 +2313,7 @@ def parse_lea(instr, inbytes, currentOffset):
 #/lea
 
 #movsd
-def parse_movsd(instr, inbytes, currentOffset):
+def parse_movsd(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2320,11 +2327,11 @@ def parse_movsd(instr, inbytes, currentOffset):
     #hexlify the instruction and extract elements
     byteString = binascii.hexlify(instr)
     mnemonic = "movsd"
-    return instructionSize, format_instr(instr, mnemonic)
+    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic)
 #/movsd
 
 #mul
-def parse_mul(instr, inbytes, currentOffset):
+def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2338,7 +2345,7 @@ def parse_mul(instr, inbytes, currentOffset):
     mod, reg, rm = parse_modrm(modrm)
     
     if reg != '100':
-        return parse_f7(reg, origInstruction, inbytes, currentOffset)
+        return parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     log.info("parse_mul: confirmed /4")
     
@@ -2365,7 +2372,7 @@ def parse_mul(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "mul"
             operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         #illegal RM
         elif rm == '100':
@@ -2388,7 +2395,7 @@ def parse_mul(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "mul"
             operand1 = "[" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     
     elif mod == '01':
         log.info("[r/m + byte]")
@@ -2404,7 +2411,7 @@ def parse_mul(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "mul"
         operand1 = "dword [byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
     elif mod == '10':
         log.info("[r/m + dword]")
@@ -2420,7 +2427,7 @@ def parse_mul(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "mul"
         operand1 = "dword [ " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
     elif mod == '11':
         log.info("r/m")
@@ -2436,7 +2443,7 @@ def parse_mul(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "mul"
         operand1 = x86RegLookup[rm]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -2444,7 +2451,7 @@ def parse_mul(instr, inbytes, currentOffset):
 #/mul
 
 #neg
-def parse_neg(instr, inbytes, currentOffset):
+def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2458,7 +2465,7 @@ def parse_neg(instr, inbytes, currentOffset):
     mod, reg, rm = parse_modrm(modrm)
     
     if reg != '011':
-        return parse_f7(reg, origInstruction, inbytes, currentOffset)
+        return parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     log.info("parse_neg: confirmed /3")
     
@@ -2485,7 +2492,7 @@ def parse_neg(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "neg"
             operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         #illegal RM
         elif rm == '100':
@@ -2508,7 +2515,7 @@ def parse_neg(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "neg"
             operand1 = "[" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     
     elif mod == '01':
         log.info("[r/m + byte]")
@@ -2525,7 +2532,7 @@ def parse_neg(instr, inbytes, currentOffset):
         mnemonic = "neg"
         operand1 = x86RegLookup[rm]
         operand2 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '10':
         log.info("[r/m + dword]")
@@ -2542,7 +2549,7 @@ def parse_neg(instr, inbytes, currentOffset):
         mnemonic = "neg"
         operand1 = x86RegLookup[rm]
         operand2 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '11':
         log.info("r/m")
@@ -2558,7 +2565,7 @@ def parse_neg(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "neg"
         operand1 = x86RegLookup[rm]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -2566,7 +2573,7 @@ def parse_neg(instr, inbytes, currentOffset):
 #/neg
 
 #not
-def parse_not(instr, inbytes, currentOffset):
+def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2580,7 +2587,7 @@ def parse_not(instr, inbytes, currentOffset):
     mod, reg, rm = parse_modrm(modrm)
     
     if reg != '010':
-        return parse_f7(reg, origInstruction, inbytes, currentOffset)
+        return parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
     
     log.info("parse_not: confirmed /2")
     
@@ -2607,7 +2614,7 @@ def parse_not(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "not"
             operand1 = "[dword 0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         #illegal RM
         elif rm == '100':
@@ -2630,7 +2637,7 @@ def parse_not(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "not"
             operand1 = "[" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
     
     elif mod == '01':
         log.info("[r/m + byte]")
@@ -2647,7 +2654,7 @@ def parse_not(instr, inbytes, currentOffset):
         mnemonic = "not"
         operand1 = x86RegLookup[rm]
         operand2 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '10':
         log.info("[r/m + dword]")
@@ -2664,7 +2671,7 @@ def parse_not(instr, inbytes, currentOffset):
         mnemonic = "not"
         operand1 = x86RegLookup[rm]
         operand2 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '11':
         log.info("r/m")
@@ -2680,7 +2687,7 @@ def parse_not(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "not"
         operand1 = x86RegLookup[rm]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -2688,7 +2695,7 @@ def parse_not(instr, inbytes, currentOffset):
 #/not
 
 #nop
-def parse_nop(instr, inbytes, currentOffset):
+def parse_nop(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2702,11 +2709,11 @@ def parse_nop(instr, inbytes, currentOffset):
     #hexlify the instruction and extract elements
     byteString = binascii.hexlify(instr)
     mnemonic = "nop"
-    return instructionSize, format_instr(instr, mnemonic)
+    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic)
 #/nop
 
 #out
-def parse_out(instr, inbytes, currentOffset):
+def parse_out(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2728,11 +2735,11 @@ def parse_out(instr, inbytes, currentOffset):
     operand1 = "0x" + byteString[2:].decode("utf-8")                                      
     operand2 = 'eax'
     offsetIncrement = instructionSize
-    return offsetIncrement, format_instr(instr, mnemonic, operand1, operand2)
+    return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, operand2)
 #/out
 
 #mov
-def parse_mov(instr, inbytes, currentOffset):
+def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -2769,7 +2776,7 @@ def parse_mov(instr, inbytes, currentOffset):
                 mnemonic = "mov"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -2792,7 +2799,7 @@ def parse_mov(instr, inbytes, currentOffset):
                 mnemonic = "mov"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -2809,7 +2816,7 @@ def parse_mov(instr, inbytes, currentOffset):
             mnemonic = "mov"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -2825,7 +2832,7 @@ def parse_mov(instr, inbytes, currentOffset):
             mnemonic = "mov"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -2841,7 +2848,7 @@ def parse_mov(instr, inbytes, currentOffset):
             mnemonic = "mov"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     if opcodeString == b'89' or opcodeString == b'8b':
         log.info("parse_mov:Found 0x89 or 0x8b")
@@ -2873,9 +2880,9 @@ def parse_mov(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'89':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -2899,9 +2906,9 @@ def parse_mov(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'8b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "[" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -2919,9 +2926,9 @@ def parse_mov(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'8b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "[byte " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[byte " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "[byte " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "[byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -2939,9 +2946,9 @@ def parse_mov(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'8b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -2960,9 +2967,9 @@ def parse_mov(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'8b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #0xb8 + rd id
     else:
@@ -2978,7 +2985,7 @@ def parse_mov(instr, inbytes, currentOffset):
         mnemonic = "mov"
         operand1 = x86RegLookup[opcodeLookup[opcodeString][2]]
         operand2 = "0x" + flipDword(byteString[2:]).decode("utf-8")
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2) 
     #/0xb8 +rd id
 
     #base case: return db
@@ -2987,7 +2994,7 @@ def parse_mov(instr, inbytes, currentOffset):
 #/mov
 
 #or
-def parse_or(instr, inbytes, currentOffset):
+def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -3012,7 +3019,7 @@ def parse_or(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'81':
         log.info("parse_or:Found 0x81")
@@ -3027,7 +3034,7 @@ def parse_or(instr, inbytes, currentOffset):
                 
         
         if reg != '001':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_or:confirmed /1")
 
@@ -3052,7 +3059,7 @@ def parse_or(instr, inbytes, currentOffset):
                 mnemonic = "or"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -3077,7 +3084,7 @@ def parse_or(instr, inbytes, currentOffset):
                 mnemonic = "or"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -3094,7 +3101,7 @@ def parse_or(instr, inbytes, currentOffset):
             mnemonic = "or"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -3110,7 +3117,7 @@ def parse_or(instr, inbytes, currentOffset):
             mnemonic = "or"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -3126,7 +3133,7 @@ def parse_or(instr, inbytes, currentOffset):
             mnemonic = "or"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -3161,9 +3168,9 @@ def parse_or(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'09':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -3187,9 +3194,9 @@ def parse_or(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'0b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -3207,9 +3214,9 @@ def parse_or(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'0b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -3227,9 +3234,9 @@ def parse_or(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'0b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -3248,9 +3255,9 @@ def parse_or(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'0b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -3258,7 +3265,7 @@ def parse_or(instr, inbytes, currentOffset):
 #/or
 
 #cmp
-def parse_cmp(instr, inbytes, currentOffset):
+def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -3283,7 +3290,7 @@ def parse_cmp(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'81':
         log.info("parse_or:Found 0x81")
@@ -3298,7 +3305,7 @@ def parse_cmp(instr, inbytes, currentOffset):
                 
         
         if reg != '111':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_cmp:confirmed /7")
 
@@ -3323,7 +3330,7 @@ def parse_cmp(instr, inbytes, currentOffset):
                 mnemonic = "cmp"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -3348,7 +3355,7 @@ def parse_cmp(instr, inbytes, currentOffset):
                 mnemonic = "cmp"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -3365,7 +3372,7 @@ def parse_cmp(instr, inbytes, currentOffset):
             mnemonic = "cmp"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -3381,7 +3388,7 @@ def parse_cmp(instr, inbytes, currentOffset):
             mnemonic = "cmp"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -3397,7 +3404,7 @@ def parse_cmp(instr, inbytes, currentOffset):
             mnemonic = "cmp"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -3432,9 +3439,9 @@ def parse_cmp(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'39':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -3458,9 +3465,9 @@ def parse_cmp(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'3b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -3478,9 +3485,9 @@ def parse_cmp(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'3b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -3498,9 +3505,9 @@ def parse_cmp(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'3b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -3519,9 +3526,9 @@ def parse_cmp(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'3b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -3529,7 +3536,7 @@ def parse_cmp(instr, inbytes, currentOffset):
 #/cmp
 
 #repne cmpsd
-def parse_repne(instr, inbytes, currentOffset):
+def parse_repne(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -3549,7 +3556,7 @@ def parse_repne(instr, inbytes, currentOffset):
         log.info("parse_repne::Found 0xa7")
         mnemonic = 'repne cmpsd'
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic)
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic)
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -3557,7 +3564,7 @@ def parse_repne(instr, inbytes, currentOffset):
 #/repne cmpsd
 
 #pop
-def parse_pop(instr, inbytes, currentOffset):
+def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
     
     #save a copy of instr before operating
     origInstruction = bytearray()
@@ -3603,7 +3610,7 @@ def parse_pop(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "pop"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -3626,7 +3633,7 @@ def parse_pop(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "pop"
                 operand1 = "[" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -3642,7 +3649,7 @@ def parse_pop(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "pop"
             operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -3658,7 +3665,7 @@ def parse_pop(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "pop"
             operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '11':
             log.info("r/m")
@@ -3674,7 +3681,7 @@ def parse_pop(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "pop"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1) 
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/8f
 
     #58 - 65
@@ -3686,7 +3693,7 @@ def parse_pop(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "pop"
         operand1 = x86RegLookup[opcodeLookup[byteString][2]]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/58 - 65
 
 
@@ -3696,7 +3703,7 @@ def parse_pop(instr, inbytes, currentOffset):
 #/pop
 
 #push
-def parse_push(instr, inbytes, currentOffset):
+def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
     
     #save a copy of instr before operating
     origInstruction = bytearray()
@@ -3717,7 +3724,7 @@ def parse_push(instr, inbytes, currentOffset):
         log.info("RM: " + str(rm))
         
         if reg != '110':
-            return parse_ff(reg, origInstruction, inbytes, currentOffset)
+            return parse_ff(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
 
         log.info("parse_push:Found ff /6")
 
@@ -3741,7 +3748,7 @@ def parse_push(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "push"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
             
             #illegal RM
             elif rm == '100':
@@ -3764,7 +3771,7 @@ def parse_push(instr, inbytes, currentOffset):
                 byteString = binascii.hexlify(instr)
                 mnemonic = "push"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
-                return instructionSize, format_instr(instr, mnemonic, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -3780,7 +3787,7 @@ def parse_push(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "push"
             operand1 = "[byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '10':
             log.info("[r/m + dword]")
@@ -3796,7 +3803,7 @@ def parse_push(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "push"
             operand1 = "[dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-            return instructionSize, format_instr(instr, mnemonic, operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1)
 
         elif mod == '11':
             log.info("r/m")
@@ -3812,7 +3819,7 @@ def parse_push(instr, inbytes, currentOffset):
             byteString = binascii.hexlify(instr)
             mnemonic = "push"
             operand1 = x86RegLookup[rm]
-            return instructionSize, format_instr(instr, mnemonic, operand1) 
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/8f
 
     #68
@@ -3828,7 +3835,7 @@ def parse_push(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "push"
         operand1 = "0x" + flipDword(byteString[2:]).decode("utf-8")
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/68
 
     #50 - 57
@@ -3840,7 +3847,7 @@ def parse_push(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "push"
         operand1 = x86RegLookup[opcodeLookup[byteString][2]]
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/50 - 57
 
 
@@ -3850,7 +3857,7 @@ def parse_push(instr, inbytes, currentOffset):
 #/push
 
 #retf
-def parse_retf(instr, inbytes, currentOffset):
+def parse_retf(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -3866,7 +3873,7 @@ def parse_retf(instr, inbytes, currentOffset):
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
         mnemonic = "retf"
-        return instructionSize, format_instr(instr, mnemonic)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic)
     #/cb
 
     #ca
@@ -3882,12 +3889,12 @@ def parse_retf(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "retf"
         operand1 = "0x" + flipWord(byteString[2:]).decode("utf-8")
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/ca
 #/retf
 
 #retn
-def parse_retn(instr, inbytes, currentOffset):
+def parse_retn(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -3903,7 +3910,7 @@ def parse_retn(instr, inbytes, currentOffset):
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
         mnemonic = "retn"
-        return instructionSize, format_instr(instr, mnemonic)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic)
     #/c3
 
     #c2
@@ -3919,12 +3926,12 @@ def parse_retn(instr, inbytes, currentOffset):
         byteString = binascii.hexlify(instr)
         mnemonic = "retn"
         operand1 = "0x" + flipWord(byteString[2:]).decode("utf-8")
-        return instructionSize, format_instr(instr, mnemonic, operand1) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
     #/c2
 #/retf
 
 #shift
-def parse_shift(instr, inbytes, currentOffset):
+def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -3976,7 +3983,7 @@ def parse_shift(instr, inbytes, currentOffset):
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
             operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         #illegal RM
         elif rm == '100':
@@ -3998,7 +4005,7 @@ def parse_shift(instr, inbytes, currentOffset):
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
             operand1 = "dword [" + x86RegLookup[rm] + "]"
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
     
     elif mod == '01':
         log.info("[r/m + byte]")
@@ -4013,7 +4020,7 @@ def parse_shift(instr, inbytes, currentOffset):
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
         operand1 = "dword [byte " + x86RegLookup[rm] + " + 0x" + byteString[4:6].decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '10':
         log.info("[r/m + dword]")
@@ -4028,7 +4035,7 @@ def parse_shift(instr, inbytes, currentOffset):
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
         operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8") +"]"
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
     elif mod == '11':
         log.info("r/m")
@@ -4043,7 +4050,7 @@ def parse_shift(instr, inbytes, currentOffset):
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
         operand1 = x86RegLookup[rm]
-        return instructionSize, format_instr(instr, mnemonic, operand1, operand2) 
+        return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2) 
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4051,7 +4058,7 @@ def parse_shift(instr, inbytes, currentOffset):
 #/shift
 
 #sbb
-def parse_sbb(instr, inbytes, currentOffset):
+def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -4076,7 +4083,7 @@ def parse_sbb(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'81':
         log.info("parse_or:Found 0x81")
@@ -4091,7 +4098,7 @@ def parse_sbb(instr, inbytes, currentOffset):
                 
         
         if reg != '011':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_or:confirmed /1")
 
@@ -4116,7 +4123,7 @@ def parse_sbb(instr, inbytes, currentOffset):
                 mnemonic = "sbb"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -4141,7 +4148,7 @@ def parse_sbb(instr, inbytes, currentOffset):
                 mnemonic = "sbb"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -4158,7 +4165,7 @@ def parse_sbb(instr, inbytes, currentOffset):
             mnemonic = "sbb"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -4174,7 +4181,7 @@ def parse_sbb(instr, inbytes, currentOffset):
             mnemonic = "sbb"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -4190,7 +4197,7 @@ def parse_sbb(instr, inbytes, currentOffset):
             mnemonic = "sbb"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4225,9 +4232,9 @@ def parse_sbb(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'19':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -4251,9 +4258,9 @@ def parse_sbb(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'1b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -4271,9 +4278,9 @@ def parse_sbb(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'1b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -4291,9 +4298,9 @@ def parse_sbb(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'1b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -4312,9 +4319,9 @@ def parse_sbb(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'1b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4322,7 +4329,7 @@ def parse_sbb(instr, inbytes, currentOffset):
 #/sbb
 
 #sub
-def parse_sub(instr, inbytes, currentOffset):
+def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -4347,7 +4354,7 @@ def parse_sub(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'81':
         log.info("parse_or:Found 0x81")
@@ -4362,7 +4369,7 @@ def parse_sub(instr, inbytes, currentOffset):
                 
         
         if reg != '101':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_or:confirmed /1")
 
@@ -4387,7 +4394,7 @@ def parse_sub(instr, inbytes, currentOffset):
                 mnemonic = "sub"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -4412,7 +4419,7 @@ def parse_sub(instr, inbytes, currentOffset):
                 mnemonic = "sub"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -4429,7 +4436,7 @@ def parse_sub(instr, inbytes, currentOffset):
             mnemonic = "sub"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -4445,7 +4452,7 @@ def parse_sub(instr, inbytes, currentOffset):
             mnemonic = "sub"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -4461,7 +4468,7 @@ def parse_sub(instr, inbytes, currentOffset):
             mnemonic = "sub"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4496,9 +4503,9 @@ def parse_sub(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'29':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -4522,9 +4529,9 @@ def parse_sub(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'2b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -4542,9 +4549,9 @@ def parse_sub(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'2b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -4562,9 +4569,9 @@ def parse_sub(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'2b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -4583,9 +4590,9 @@ def parse_sub(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'2b':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4593,7 +4600,7 @@ def parse_sub(instr, inbytes, currentOffset):
 #/sub
 
 #test
-def parse_test(instr, inbytes, currentOffset):
+def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -4618,7 +4625,7 @@ def parse_test(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'f7':
         log.info("parse_test:Found 0xf7")
@@ -4633,7 +4640,7 @@ def parse_test(instr, inbytes, currentOffset):
                 
         
         if reg != '000':
-            return parse_f7(reg, origInstruction, inbytes, currentOffset)
+            return parse_f7(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_or:confirmed /1")
 
@@ -4658,7 +4665,7 @@ def parse_test(instr, inbytes, currentOffset):
                 mnemonic = "test"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -4683,7 +4690,7 @@ def parse_test(instr, inbytes, currentOffset):
                 mnemonic = "test"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -4700,7 +4707,7 @@ def parse_test(instr, inbytes, currentOffset):
             mnemonic = "test"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -4716,7 +4723,7 @@ def parse_test(instr, inbytes, currentOffset):
             mnemonic = "test"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -4732,7 +4739,7 @@ def parse_test(instr, inbytes, currentOffset):
             mnemonic = "test"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4767,7 +4774,7 @@ def parse_test(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
 
-                return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -4790,7 +4797,7 @@ def parse_test(instr, inbytes, currentOffset):
                 operand1 = x86RegLookup[reg]
                 operand2 = x86RegLookup[rm]
             
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -4808,7 +4815,7 @@ def parse_test(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
 
-            return instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -4825,7 +4832,7 @@ def parse_test(instr, inbytes, currentOffset):
             operand1 = x86RegLookup[reg]
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
-            return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -4843,7 +4850,7 @@ def parse_test(instr, inbytes, currentOffset):
             operand1 = x86RegLookup[reg]
             operand2 = x86RegLookup[rm]
 
-            return instructionSize, format_instr(instr, mnemonic, operand1,  operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1,  operand2)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -4851,7 +4858,7 @@ def parse_test(instr, inbytes, currentOffset):
 #/test
 
 #xor
-def parse_xor(instr, inbytes, currentOffset):
+def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
     #save a copy of instr before operating
     origInstruction = bytearray()
     origInstruction.append(inbytes[currentOffset])
@@ -4876,7 +4883,7 @@ def parse_xor(instr, inbytes, currentOffset):
         operand2 = flipDword(byteString[-8:])
         log.info(operand2)
         offsetIncrement = instructionSize
-        return offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
+        return jumpToOffsets, offsetIncrement, format_instr(instr, mnemonic, operand1, "0x" + operand2.decode("utf-8"))
 
     elif opcodeString == b'81':
         log.info("parse_or:Found 0x81")
@@ -4891,7 +4898,7 @@ def parse_xor(instr, inbytes, currentOffset):
                 
         
         if reg != '110':
-            return parse_81(reg, origInstruction, inbytes, currentOffset)
+            return parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset)
         
         log.info("parse_or:confirmed /1")
 
@@ -4916,7 +4923,7 @@ def parse_xor(instr, inbytes, currentOffset):
                 mnemonic = "xor"
                 operand1 = "dword [0x" + flipDword(byteString[4:12]).decode("utf-8") + "]"
                 operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             
             #illegal RM
             elif rm == '100':
@@ -4941,7 +4948,7 @@ def parse_xor(instr, inbytes, currentOffset):
                 mnemonic = "xor"
                 operand1 = "dword [" + x86RegLookup[rm] + "]"
                 operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         
         elif mod == '01':
             log.info("[r/m + byte]")
@@ -4958,7 +4965,7 @@ def parse_xor(instr, inbytes, currentOffset):
             mnemonic = "xor"
             operand1 = "dword [byte " + x86RegLookup[rm] + " + " + byteString[4:6].decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[6:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '10':
             log.info("[r/m + dword]")
 
@@ -4974,7 +4981,7 @@ def parse_xor(instr, inbytes, currentOffset):
             mnemonic = "xor"
             operand1 = "dword [dword " + x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:12]).decode("utf-8") +"]"
             operand2 = "0x" + flipDword(byteString[12:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
         elif mod == '11':
             log.info("r/m")
 
@@ -4990,7 +4997,7 @@ def parse_xor(instr, inbytes, currentOffset):
             mnemonic = "xor"
             operand1 = x86RegLookup[rm]
             operand2 = "0x" + flipDword(byteString[4:]).decode("utf-8")
-            return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+            return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
@@ -5025,9 +5032,9 @@ def parse_xor(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[reg]
 
                 if opcodeString == b'31':
-                    return instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "[" + operand2 + "]")
                 else:
-                    return instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
+                    return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, "dword [" + operand1 + "]")
             
             #illegal RM
             elif rm == '100':
@@ -5051,9 +5058,9 @@ def parse_xor(instr, inbytes, currentOffset):
                 operand2 = x86RegLookup[rm]
             
             if opcodeString == b'33':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [" + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [" + operand2 +"]", operand1)
         
         if mod == '01':
             log.info("[r/m + byte]")
@@ -5071,9 +5078,9 @@ def parse_xor(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + " + byteString[4:].decode("utf-8")
             
             if opcodeString == b'33':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [byte " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [byte " + operand2 +"]", operand1)
         
         if mod == '10':
             log.info("r/m + dword")
@@ -5091,9 +5098,9 @@ def parse_xor(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm] + " + 0x" + flipDword(byteString[4:]).decode("utf-8")
 
             if opcodeString == b'33':
-                return instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, "dword [dword " + operand2 + "]")
             else:
-                return instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, "dword [dword " + operand2 +"]", operand1)
         
         if mod == '11':
             log.info("r/m")
@@ -5112,32 +5119,32 @@ def parse_xor(instr, inbytes, currentOffset):
             operand2 = x86RegLookup[rm]
 
             if opcodeString == b'33':
-                return instructionSize, format_instr(instr, mnemonic, operand1, operand2)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2)
             else:
-                return instructionSize, format_instr(instr, mnemonic, operand2, operand1)
+                return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand2, operand1)
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
     return 1, format_instr(instr, mnemonic)
 #/xor
 
-def parse(instruction, inbytes, currentOffset):
+def parse(jumpToOffsets, instruction, inbytes, currentOffset):
     log.info("parse::Instruction: " + str(binascii.hexlify(instruction)))
     byteString= binascii.hexlify(instruction)
     if byteString in opcodeLookup:
         log.info("Found opcode " + byteString.decode("utf-8") + ":" + opcodeLookup[byteString][1])
         method_to_call = "parse_" + opcodeLookup[byteString][0]
         log.info("Calling parser " + method_to_call)
-        offsetIncrement, result = eval(method_to_call + "(instruction, inbytes, currentOffset)")        
+        jumpToOffsets, offsetIncrement, result = eval(method_to_call + "(jumpToOffsets, instruction, inbytes, currentOffset)")        
         if result:
-            return offsetIncrement, result
+            return jumpToOffsets, offsetIncrement, result
         #parsers = [parse_int3, parse_cpuid, parse_add, parse_fake_mov]
         #for p in parsers:
         #    result = p(instruction)
         #    if result:
         #    return result
     mnemonic = 'db 0x' + opcodeString.decode("utf-8") 
-    return 1, format_instr(instr, mnemonic)
+    return jumpToOffsets, 1, format_instr(instr, mnemonic)
  
 if '__main__' == __name__:
     parser = argparse.ArgumentParser()
@@ -5176,7 +5183,7 @@ if '__main__' == __name__:
         instr.append(b)
         opcodeString = binascii.hexlify(instr)
         log.debug('Testing instruction: {}'.format(binascii.hexlify(instr)))
-        offsetIncrement, result = parse(instr, inbytes, offset)
+        jumpToOffsets, offsetIncrement, result = parse(jumpToOffsets, instr, inbytes, offset)
         if result:
             #Code for incrementing offset and 
             byteString = binascii.hexlify(instr)
@@ -5192,9 +5199,13 @@ if '__main__' == __name__:
         else:
             offset += 1
 
+    log.info(jumpToOffsets)
     log.debug('Creating output data')
     output = ''
     for (offset, text) in instructions:
+        log.info(offset)
+        if hex(offset) in jumpToOffsets:
+            output += "offset_" + hex(offset)[2:].zfill(8) +"h\n" 
         output += '{:08x}:   {}\n'.format(offset, text)
 
     log.debug('Attempting to write output')
