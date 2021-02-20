@@ -394,7 +394,7 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -460,7 +460,7 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
     #/81
 
     #03 or 01
@@ -502,7 +502,7 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -586,7 +586,7 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
                 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
     #03 or 01
 
     """POC
@@ -604,7 +604,7 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/add
 
 #and    TODO make [byte] [dword] like call  
@@ -686,7 +686,7 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -752,7 +752,7 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'23' or opcodeString == b'21':
         log.info("parse_add:Found 0x01 or 0x03")
@@ -792,7 +792,7 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -876,7 +876,7 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/and
 
 #call   TODO offset tracking
@@ -956,7 +956,7 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -1023,7 +1023,7 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/call
 
 #clflush
@@ -1080,7 +1080,7 @@ def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         else:
             log.info("parse_clflush: [r/m]")
@@ -1130,7 +1130,7 @@ def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/clflush
 
 #dec
@@ -1184,7 +1184,7 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -1263,7 +1263,7 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
         
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/dec
 
 #idiv
@@ -1318,7 +1318,7 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         #[not special case]
         else:
@@ -1385,7 +1385,7 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/idiv
 
 #imul
@@ -1442,7 +1442,7 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -1562,7 +1562,7 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 3 (opcode + byte2 + modrm)
@@ -1670,7 +1670,7 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 6 (opcode + modrm + imm32)
@@ -1745,7 +1745,7 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1, operand2, operand3)   
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/imul
 
 #inc
@@ -1800,7 +1800,7 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -1867,7 +1867,7 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
             return jumpToOffsets, instructionSize, format_instr(instr, mnemonic, operand1) 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
     #/ff
 
     #40 - 47
@@ -1884,7 +1884,7 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/inc
 
 #jmp   TODO offset tracking
@@ -1990,7 +1990,7 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -2130,7 +2130,7 @@ def parse_jz(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/jz
 
 #jnz 
@@ -2204,7 +2204,7 @@ def parse_jnz(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/jz
 
 #lea
@@ -2251,7 +2251,7 @@ def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         #[not special case]
         else:
@@ -2309,7 +2309,7 @@ def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/lea
 
 #movsd
@@ -2379,7 +2379,7 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         #[not special case]
         else:
@@ -2447,7 +2447,7 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/mul
 
 #neg
@@ -2499,7 +2499,7 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         #[not special case]
         else:
@@ -2569,7 +2569,7 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/neg
 
 #not
@@ -2621,7 +2621,7 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         #[not special case]
         else:
@@ -2691,7 +2691,7 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/not
 
 #nop
@@ -2783,7 +2783,7 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -2889,7 +2889,7 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -2936,8 +2936,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2990,7 +2995,7 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumpToOffsets, 1, format_instr(instr, mnemonic)
 #/mov
 
 #or
@@ -3066,7 +3071,7 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -3137,7 +3142,7 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'09' or opcodeString == b'0b':
         log.info("parse_or:Found 0x09 or 0x0b")
@@ -3177,7 +3182,7 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -3261,7 +3266,7 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/or
 
 #cmp
@@ -3337,7 +3342,7 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -3408,7 +3413,7 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'39' or opcodeString == b'3b':
         log.info("parse_cmp:Found 0x39 or 0x3b")
@@ -3448,7 +3453,7 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -3532,7 +3537,7 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/cmp
 
 #repne cmpsd
@@ -3586,7 +3591,7 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
         
         if reg != '000':
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         log.info("parse_inc:Found 8f /0")
 
@@ -3617,7 +3622,7 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -3699,7 +3704,7 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/pop
 
 #push
@@ -3755,7 +3760,7 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -3853,7 +3858,7 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/push
 
 #retf
@@ -3955,7 +3960,7 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
     
     else:
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     log.info("parse_shift: confirmed reg")
     
@@ -3990,7 +3995,7 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
             log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
             log.info(opcodeString)
             mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-            return 1, format_instr(instr, mnemonic)
+            return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
         #[not special case]
         else:
@@ -4054,7 +4059,7 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
     
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/shift
 
 #sbb
@@ -4130,7 +4135,7 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -4201,7 +4206,7 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'19' or opcodeString == b'1b':
         log.info("parse_or:Found 0x09 or 0x0b")
@@ -4241,7 +4246,7 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -4325,7 +4330,7 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/sbb
 
 #sub
@@ -4401,7 +4406,7 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -4472,7 +4477,7 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'29' or opcodeString == b'2b':
         log.info("parse_or:Found 0x09 or 0x0b")
@@ -4512,7 +4517,7 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -4596,7 +4601,7 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/sub
 
 #test
@@ -4672,7 +4677,7 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -4743,7 +4748,7 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'85':
         log.info("parse_or:Found 0x09 or 0x0b")
@@ -4781,7 +4786,7 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -4854,7 +4859,7 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/test
 
 #xor
@@ -4930,7 +4935,7 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             #[not special case]
             else:
@@ -5001,7 +5006,7 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
 
         #base case: return db
         mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-        return 1, format_instr(instr, mnemonic)
+        return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
     elif opcodeString == b'31' or opcodeString == b'33':
         log.info("parse_or:Found 0x09 or 0x0b")
@@ -5041,7 +5046,7 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
                 log.info("Illegal Combo: mod==00 and rm==100, implying SIB byte.")
                 log.info(opcodeString)
                 mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-                return 1, format_instr(instr, mnemonic)
+                return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 
             else:
                 #instruction size is 2 (opcode + modrm)
@@ -5125,7 +5130,7 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
 
     #base case: return db
     mnemonic = 'db 0x' + opcodeString.decode("utf-8")
-    return 1, format_instr(instr, mnemonic)
+    return jumptoOffsets, 1, format_instr(origInstr, mnemonic)
 #/xor
 
 def parse(jumpToOffsets, instruction, inbytes, currentOffset):
