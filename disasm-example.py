@@ -329,8 +329,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
         #instruction size is 5 (opcode + dword)
         instructionSize = 5
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_add::Found 0x05")
         byteString = binascii.hexlify(instr)
@@ -379,8 +384,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -399,8 +409,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             #[not special case]
             else:
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -416,8 +431,15 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+           
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -432,8 +454,15 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+           
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+           
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -448,8 +477,15 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -483,8 +519,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -509,8 +550,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -529,8 +575,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -549,8 +600,15 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+            
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -570,8 +628,13 @@ def parse_add(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -623,8 +686,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_add::Found 0x25")
         byteString = binascii.hexlify(instr)
@@ -671,8 +739,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -691,8 +764,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             #[not special case]
             else:
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -708,8 +786,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -724,8 +807,15 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+       
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+     
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -740,8 +830,15 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+          
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -773,8 +870,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -799,8 +901,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -819,8 +926,15 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -839,8 +953,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -860,8 +979,13 @@ def parse_and(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -892,8 +1016,13 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
         
         #instruction size is fixed (5, opcode + id dword)
         instructionSize = 5
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_call::Found 0xE8")
         byteString = binascii.hexlify(instr)
@@ -942,8 +1071,13 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -964,8 +1098,13 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
                 #instruction size is 2 (opcode + modrm)
                 instructionSize = 2
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -980,8 +1119,13 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -996,8 +1140,13 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1011,8 +1160,13 @@ def parse_call(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1066,9 +1220,16 @@ def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read remaining bytes
-            for x in range(currentOffset + 3, currentOffset + instructionSize):
-                instr.append(inbytes[x])
 
+            try:
+                for x in range(currentOffset + 3, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+
+                
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
             mnemonic = "clflush"
@@ -1089,8 +1250,13 @@ def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read remaining bytes
-            for x in range(currentOffset + 3, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 3, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1104,9 +1270,14 @@ def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 4
 
         #read remaining bytes
-        for x in range(currentOffset + 3, currentOffset + instructionSize):
-            instr.append(inbytes[x])
-
+        try:
+            for x in range(currentOffset + 3, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+            
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
         mnemonic = "clflush"
@@ -1119,8 +1290,13 @@ def parse_clflush(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 7
 
         #read remaining bytes
-        for x in range(currentOffset + 3, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 3, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -1170,8 +1346,13 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1193,8 +1374,13 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
                 #instruction size is 2 (opcode + modrm)
                 instructionSize = 2
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1209,8 +1395,13 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1225,8 +1416,13 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1240,8 +1436,13 @@ def parse_dec(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1304,8 +1505,13 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
             
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1327,8 +1533,13 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 2 (opcode + modrm)
             instructionSize = 2
             #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1343,8 +1554,14 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -1359,8 +1576,14 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 6
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -1374,8 +1597,14 @@ def parse_idiv(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 2
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -1428,8 +1657,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1451,8 +1685,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 #instruction size is 2 (opcode + modrm)
                 instructionSize = 2
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1467,8 +1706,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1483,8 +1727,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1498,8 +1747,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1546,8 +1800,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 7
             
                 #read in remaining bytes
-                for x in range(currentOffset + 3, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 3, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1569,8 +1828,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 3
 
                 #read in remaining bytes
-                for x in range(currentOffset + 3, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 3, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1586,8 +1850,14 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 3, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+
+            try:
+                for x in range(currentOffset + 3, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1603,8 +1873,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 7 (opcode + byte2 + modrm + dword)
             instructionSize = 7
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1621,8 +1896,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 3, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 3, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1653,8 +1933,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1677,8 +1962,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1695,8 +1985,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 7 (opcode + modrm + byte + imm32)
             instructionSize = 7
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1713,8 +2008,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 10 (opcode + modrm + dword + imm32)
             instructionSize = 10
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1732,8 +2032,13 @@ def parse_imul(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1786,8 +2091,13 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1809,8 +2119,13 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
                 #instruction size is 2 (opcode + modrm)
                 instructionSize = 2
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1825,8 +2140,13 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1841,8 +2161,13 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1857,8 +2182,13 @@ def parse_inc(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -1900,8 +2230,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
         
         #instruction size is 2 (opcode + ib)
         instructionSize = 2
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_jmp::Found 0xEB")
         byteString = binascii.hexlify(instr)
@@ -1925,8 +2260,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
         
         #instruction size is 5 (opcode + id)
         instructionSize = 5
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_jmp::Found 0xE9")
         byteString = binascii.hexlify(instr)
@@ -1976,8 +2316,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -1997,8 +2342,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
                 
                 #instruction size = 2 (opcode + modrm)
                 instructionSize = 2
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -2013,8 +2363,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2029,8 +2384,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2044,8 +2404,13 @@ def parse_jmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2072,8 +2437,13 @@ def parse_jz(jumpToOffsets, instr, inbytes, currentOffset):
     if opcodeString == b'74':
         #instruction size is 2 (opcode + ib)
         instructionSize = 2
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_jz::Found 0x74")
         byteString = binascii.hexlify(instr)
@@ -2108,8 +2478,14 @@ def parse_jz(jumpToOffsets, instr, inbytes, currentOffset):
 
         #instruction size is 6 (opcode + byte2 + id)
         instructionSize = 6
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_jz::Found 0x0f 0x84")
         byteString = binascii.hexlify(instr)
@@ -2146,8 +2522,13 @@ def parse_jnz(jumpToOffsets, instr, inbytes, currentOffset):
     if opcodeString == b'75':
         #instruction size is 2 (opcode + ib)
         instructionSize = 2
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_jnz::Found 0x74")
         byteString = binascii.hexlify(instr)
@@ -2182,8 +2563,14 @@ def parse_jnz(jumpToOffsets, instr, inbytes, currentOffset):
 
         #instruction size is 6 (opcode + byte2 + id)
         instructionSize = 6
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_jnz::Found 0x0f 0x84")
         byteString = binascii.hexlify(instr)
@@ -2236,8 +2623,13 @@ def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
             
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2260,8 +2652,13 @@ def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 2 (opcode + modrm)
             instructionSize = 2
             #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2277,8 +2674,14 @@ def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2294,8 +2697,14 @@ def parse_lea(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 6
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2365,8 +2774,13 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
             
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2388,8 +2802,13 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 2 (opcode + modrm)
             instructionSize = 2
             #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2404,8 +2823,14 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2420,8 +2845,14 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 6
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2436,8 +2867,14 @@ def parse_mul(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 2
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2485,8 +2922,13 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
             
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2508,8 +2950,13 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 2 (opcode + modrm)
             instructionSize = 2
             #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2524,8 +2971,14 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2541,8 +2994,14 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 6
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2558,8 +3017,14 @@ def parse_neg(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 2
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2607,8 +3072,14 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
             
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+            
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2630,8 +3101,15 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 2 (opcode + modrm)
             instructionSize = 2
             #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+            
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+            
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2646,8 +3124,14 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2663,8 +3147,14 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 6
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2680,8 +3170,14 @@ def parse_not(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 2
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -2723,9 +3219,15 @@ def parse_out(jumpToOffsets, instr, inbytes, currentOffset):
     
     #instruction size is 2 (opcode + ib)
     instructionSize = 2
-    for x in range(currentOffset + 1, currentOffset + instructionSize):
-        instr.append(inbytes[x])
-    
+    try:
+        for x in range(currentOffset + 1, currentOffset + instructionSize):
+            instr.append(inbytes[x])
+    except:
+        #base case: return db
+        mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+        return jumpToOffsets, 1, format_instr(origInstruction, mnemonic) 
+
+
     log.info("parse_out::Found 0x")
     byteString = binascii.hexlify(instr)
     log.info(byteString)
@@ -2768,8 +3270,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -2791,8 +3298,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
                 #instructionSize = 6 (opcode + modrm + dword)
                 instructionSize = 6
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -2808,8 +3320,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2824,8 +3341,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2840,8 +3362,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2870,9 +3397,14 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
-                
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
                 mnemonic = 'mov'
@@ -2896,8 +3428,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -2916,8 +3453,14 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+            
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2962,8 +3505,15 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
+        
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -2982,8 +3532,13 @@ def parse_mov(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #read in remaining bytes
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -3012,8 +3567,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_add::Found 0x25")
         byteString = binascii.hexlify(instr)
@@ -3056,8 +3616,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3081,8 +3646,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
 
                 #read in remaining bytes
                             
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3098,8 +3668,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3114,8 +3689,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3130,8 +3710,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3163,8 +3748,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3189,8 +3779,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3209,8 +3804,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3229,8 +3829,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3250,8 +3855,13 @@ def parse_or(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3283,8 +3893,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_cmp::Found 0x25")
         byteString = binascii.hexlify(instr)
@@ -3327,8 +3942,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3352,8 +3972,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
 
                 #read in remaining bytes
                             
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3369,8 +3994,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3385,8 +4015,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3401,8 +4036,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3434,8 +4074,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3460,8 +4105,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3480,8 +4130,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3500,8 +4155,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3521,8 +4181,13 @@ def parse_cmp(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3608,8 +4273,13 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3631,8 +4301,13 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
                 #instruction size is 2 (opcode + modrm)
                 instructionSize = 2
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3647,8 +4322,13 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3663,8 +4343,13 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3679,8 +4364,13 @@ def parse_pop(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3746,8 +4436,13 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3769,8 +4464,13 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
                 #instruction size is 2 (opcode + modrm)
                 instructionSize = 2
                 #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -3785,8 +4485,13 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 3
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3801,8 +4506,13 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3817,8 +4527,13 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -3833,8 +4548,13 @@ def parse_push(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #read in remaining bytes
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -3887,8 +4607,13 @@ def parse_retf(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -3924,8 +4649,13 @@ def parse_retn(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -3982,8 +4712,13 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
             
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4004,8 +4739,13 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 2 (opcode + modrm)
             instructionSize = 2
             #read in remaining bytes, instruction size is the default 6 (opcode + modrm + imm32)
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4019,8 +4759,14 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 3
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -4034,8 +4780,14 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 6
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -4049,8 +4801,14 @@ def parse_shift(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 2
 
         #read in remaining bytes
-        for x in range(currentOffset + 2, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+        
+            for x in range(currentOffset + 2, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         #hexlify the instruction and extract elements
         byteString = binascii.hexlify(instr)
@@ -4076,8 +4834,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_add::Found 0x25")
         byteString = binascii.hexlify(instr)
@@ -4120,8 +4883,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4145,8 +4913,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
 
                 #read in remaining bytes
                             
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4162,8 +4935,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4178,8 +4956,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4194,8 +4977,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4227,8 +5015,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4253,8 +5046,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4273,8 +5071,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4293,8 +5096,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4314,8 +5122,13 @@ def parse_sbb(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4347,8 +5160,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_add::Found 0x25")
         byteString = binascii.hexlify(instr)
@@ -4391,8 +5209,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4416,8 +5239,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
 
                 #read in remaining bytes
                             
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4433,8 +5261,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4449,8 +5282,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4465,8 +5303,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4498,8 +5341,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4524,8 +5372,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4544,8 +5397,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4564,8 +5422,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4585,8 +5448,13 @@ def parse_sub(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4618,8 +5486,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_test::Found 0xa9")
         byteString = binascii.hexlify(instr)
@@ -4662,8 +5535,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4687,8 +5565,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
 
                 #read in remaining bytes
                             
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4704,8 +5587,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4720,8 +5608,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4736,8 +5629,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4769,8 +5667,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4793,8 +5696,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4810,8 +5718,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4828,8 +5741,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4846,8 +5764,13 @@ def parse_test(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4876,8 +5799,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
         instructionSize = 5
 
         #add remaining bytes to instruction
-        for x in range(currentOffset + 1, currentOffset + instructionSize):
-            instr.append(inbytes[x])
+        try:
+            for x in range(currentOffset + 1, currentOffset + instructionSize):
+                instr.append(inbytes[x])
+        except:
+            #base case: return db
+            mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+            return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
         
         log.info("parse_add::Found 0x25")
         byteString = binascii.hexlify(instr)
@@ -4920,8 +5848,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 10
                 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4945,8 +5878,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
 
                 #read in remaining bytes
                             
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -4962,8 +5900,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 7
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4978,8 +5921,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 10
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -4994,8 +5942,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 6
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -5027,8 +5980,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 6
             
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -5053,8 +6011,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
                 instructionSize = 2
 
                 #read in remaining bytes
-                for x in range(currentOffset + 2, currentOffset + instructionSize):
-                    instr.append(inbytes[x])
+                try:
+                    for x in range(currentOffset + 2, currentOffset + instructionSize):
+                        instr.append(inbytes[x])
+                except:
+                    #base case: return db
+                    mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                    return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
                 
                 #hexlify the instruction and extract elements
                 byteString = binascii.hexlify(instr)
@@ -5073,8 +6036,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 3 (opcode + modrm + byte)
             instructionSize = 3
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -5093,8 +6061,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
             #instruction size is 6 (opcode + modrm + dword)
             instructionSize = 6
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
@@ -5114,8 +6087,13 @@ def parse_xor(jumpToOffsets, instr, inbytes, currentOffset):
             instructionSize = 2
 
             #read in remaining bytes
-            for x in range(currentOffset + 2, currentOffset + instructionSize):
-                instr.append(inbytes[x])
+            try:
+                for x in range(currentOffset + 2, currentOffset + instructionSize):
+                    instr.append(inbytes[x])
+            except:
+                #base case: return db
+                mnemonic = 'db 0x' + opcodeString.decode("utf-8")
+                return jumpToOffsets, 1, format_instr(origInstruction, mnemonic)
             
             #hexlify the instruction and extract elements
             byteString = binascii.hexlify(instr)
