@@ -298,10 +298,10 @@ def parse_81(reg, jumpToOffsets, origInstruction, inbytes, currentOffset):
 #/parse_81 router
 
 # This is not really "mov eax, eax", only an example of a formatted instruction
-def parse_fake_mov(jumpToOffsets, instr, inbytes, currentOffset):
+"""def parse_fake_mov(jumpToOffsets, instr, inbytes, currentOffset):
     if 2 == len(instr) and b'\xd0\x0d' == instr:
         log.info('Found fake mov!')
-        return format_instr(instr, 'mov', 'eax', 'eax')
+        return format_instr(instr, 'mov', 'eax', 'eax')"""
 
 def parse_modrm(modrmByte):
     modrmBinary = bin(int(modrmByte, 16))[2:].zfill(8)
